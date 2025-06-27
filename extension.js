@@ -31,12 +31,14 @@ function activate(context) {
             
             // Create a new terminal with the selected directory as CWD
             const terminal = vscode.window.createTerminal({
-                name: `Terminal (${fsPath.split('\\').pop()})`,
+                name: `Radian (${fsPath.split('\\').pop()})`,
+                shellPath: "/home/averissimo/.local/bin/radian",
                 cwd: fsPath
             });
             
             terminal.show();
-            vscode.window.showInformationMessage(`Terminal opened at: ${fsPath}`);
+            terminal.sendText('radian');
+            vscode.window.showInformationMessage(`Radian opened at: ${fsPath}`);
         } catch (error) {
             vscode.window.showErrorMessage(`Failed to open terminal: ${error.message}`);
             console.error(error);
