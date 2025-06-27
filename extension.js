@@ -37,7 +37,6 @@ function activate(context) {
             });
             
             terminal.show();
-            terminal.sendText('radian');
             vscode.window.showInformationMessage(`Radian opened at: ${fsPath}`);
         } catch (error) {
             vscode.window.showErrorMessage(`Failed to open terminal: ${error.message}`);
