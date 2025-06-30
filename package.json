@@ -1,9 +1,9 @@
 {
-  "name": "open-terminal-here",
-  "displayName": "Open Terminal Here",
-  "description": "Open terminal at the selected folder location or current file directory",
-  "version": "1.0.0",
-  "publisher": "jeff-hughes",
+  "name": "open-radian-here",
+  "displayName": "Open Radian Here",
+  "description": "Open radian at the selected folder location or current file directory",
+  "version": "1.0.1",
+  "publisher": "averissimo",
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -18,14 +18,18 @@
   "contributes": {
     "commands": [
       {
-        "command": "open-terminal-here.openTerminalHere",
-        "title": "Open Terminal Here"
+        "command": "open-radian-here.openRadianHere",
+        "title": "Open Radian Here"
+      },
+      {
+        "command": "open-radian-here.insertTextOrSendToTerminal",
+        "title": "pkgload injection"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "open-terminal-here.openTerminalHere",
+          "command": "open-radian-here.openRadianHere",
           "group": "navigation"
         }
       ]
@@ -49,7 +53,7 @@
     "folder",
     "context menu"
   ],
-  "author": "Jeff Hughes",
+  "author": "André Veríssimo",
   "license": "MIT",
   "devDependencies": {
     "@types/vscode": "^1.74.0",
