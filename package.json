@@ -1,7 +1,7 @@
 {
-  "name": "open-radian-here",
-  "displayName": "Open Radian Here",
-  "description": "Open radian at the selected folder location or current file directory",
+  "name": "open-rterminal-here",
+  "displayName": "Open R Terminal Here",
+  "description": "Open R terminal at the selected folder location or current file directory",
   "version": "1.0.1",
   "publisher": "averissimo",
   "engines": {
@@ -13,23 +13,27 @@
   "main": "./extension.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/username/open-terminal-here.git"
+    "url": "https://github.com/averissimo/open-terminal-here.git"
   },
   "contributes": {
     "commands": [
       {
-        "command": "open-radian-here.openRadianHere",
-        "title": "Open Radian Here"
+        "command": "open-rterminal-here.openRTerminalHere",
+        "title": "Open R terminal Here"
       },
       {
-        "command": "open-radian-here.insertTextOrSendToTerminal",
-        "title": "pkgload injection"
+        "command": "open-rterminal-here.insertDevtoolsDocumentToTerminal",
+        "title": "run devtools::document"
+      },
+      {
+        "command": "open-rterminal-here.insertLoadAllTerminal",
+        "title": "run pkgload::load_all"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "open-radian-here.openRadianHere",
+          "command": "open-rterminal-here.openRTerminalHere",
           "group": "navigation"
         }
       ]
