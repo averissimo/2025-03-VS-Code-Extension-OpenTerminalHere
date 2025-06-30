@@ -49,7 +49,16 @@ function activate(context) {
     });
 
     let sendDocument = vscode.commands.registerCommand('open-rterminal-here.insertDevtoolsDocumentToTerminal', async () => {
-        const commandText = "devtools::document()";
+        let packagePath = findPackageRelativePath("devtools::document");
+
+        // Build your command string
+        if (packagePath) {
+            sendToTerminal("devtools::document", packagePath);
+        }
+    });
+
+    let rcmdcheck = vscode.commands.registerCommand('open-rterminal-here.insertRCMDCheckToTerminal', async () => {
+        const commandText = "rcmdcheck::rcmdcheck()";
 
         let terminal = vscode.window.activeTerminal;
         if (!terminal) {
@@ -61,54 +70,61 @@ function activate(context) {
     });
 
     let sendLoadAll = vscode.commands.registerCommand('open-rterminal-here.insertLoadAllTerminal', async () => {
-        const editor = vscode.window.activeTextEditor;
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-
-        if (!editor) {
-            vscode.window.showErrorMessage("No active file.");
-            return;
-        }
-
-        if (!workspaceFolder) {
-            const fileDir = path.dirname(filePath);
-            vscode.window.showErrorMessage("No workspace open. Using file's directory instead.");
-            sendToTerminal(fileDir);
-            return;
-        }
-
-        const filePath = editor.document.uri.fsPath;
-        const workspacePath = workspaceFolder.uri.fsPath;
-
-        // Compute the path of active file relative to the workspace root
-        const relativePath = path.relative(workspacePath, filePath);
-
-        let packagePath;
-        if (!relativePath || relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
-            // filePath is outside workspace — use the file's own folder
-            packagePath = fileDir;
-        } else {
-            // file is inside workspace — get first-level folder
-            const parts = relativePath.split(path.sep);
-
-            if (parts.length === 0) {
-                vscode.window.showErrorMessage("Couldn't determine folder after workspace root.");
-                return;
-            }
-
-            const firstLevelFolder = parts[0];
-            packagePath = path.join(workspacePath, firstLevelFolder);
-        }
+        let packagePath = findPackageRelativePath("pkgload::load_all");
 
         // Build your command string
-        sendToTerminal(packagePath)
+        if (packagePath) {
+            sendToTerminal("pkgload::load_all", packagePath);
+        }
     });
     context.subscriptions.push(openTerminal);
     context.subscriptions.push(sendLoadAll);
     context.subscriptions.push(sendDocument);
 }
 
-function sendToTerminal(packagePath) {
-    const commandText = `pkgload::load_all("${packagePath.replace(/\\/g, "/")}")`;
+function findPackageRelativePath(functionName) {
+    const editor = vscode.window.activeTextEditor;
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+
+    if (!editor) {
+        vscode.window.showErrorMessage("No active file.");
+        return;
+    }
+
+    const filePath = editor.document.uri.fsPath;
+    const workspacePath = workspaceFolder.uri.fsPath;
+
+    const fileDir = path.dirname(filePath);
+    if (!workspaceFolder) {
+        vscode.window.showErrorMessage("No workspace open. Using file's directory instead.");
+        sendToTerminal(functionName, fileDir);
+        return;
+    }
+
+    // Compute the path of active file relative to the workspace root
+    const relativePath = path.relative(workspacePath, filePath);
+
+    let packagePath;
+    if (!relativePath || relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+        // filePath is outside workspace — use the file's own folder
+        packagePath = fileDir;
+    } else {
+        // file is inside workspace — get first-level folder
+        const parts = relativePath.split(path.sep);
+
+        if (parts.length === 0) {
+            vscode.window.showErrorMessage("Couldn't determine folder after workspace root.");
+            return;
+        }
+
+        const firstLevelFolder = parts[0];
+        packagePath = path.join(workspacePath, firstLevelFolder);
+    }
+    return packagePath;
+}
+
+function sendToTerminal(functionName, packagePath) {
+    const commandText = `${functionName}("${packagePath.replace(/\\/g, "/")}")`;
 
     let terminal = vscode.window.activeTerminal;
     if (!terminal) {
@@ -120,7 +136,6 @@ function sendToTerminal(packagePath) {
 
     vscode.window.showInformationMessage(`Sent: ${commandText}`);
 }
-
 
 function deactivate() {}
 
